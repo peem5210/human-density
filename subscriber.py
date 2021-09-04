@@ -12,8 +12,8 @@ load_dotenv(os.path.join(os.path.dirname('./'), '.env'))
 
 class Main:
     def __init__(self):
-        # self.connection = self.connect_database()
         self.engine = self.connect_engine()
+        self.connection = self.connect_database()
         self.detail_df = self.get_sensor_detail()
         self.sensor_location_mapping = dict(self.detail_df[['sensor_id', 'location_id']].values.tolist())
         self.state = self.initialize_state()
@@ -83,9 +83,9 @@ class Main:
         self.insert_msg_log(obj.sensor_id, obj.action)
         
     def insert_total_log(self):
-        df = pd.DataFrame(data=[[self.sensor_location_mapping[x],y] for x,y in self.state.items()], columns=['location_id', 'total'])
-        df.to_sql('total_log', self.engine, if_exists='append', index=False)
-
+        pd.DataFrame(data=[[self.sensor_location_mapping[x],y] for x,y in self.state.items()], columns=['location_id', 'total'])\
+            .groupby("location_id").sum('total').reset_index()\
+            .to_sql('total_log', self.engine, if_exists='append', index=False)
 
     def insert_total_log_loop(self, threading_event):
         self.insert_total_log()
