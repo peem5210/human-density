@@ -29,7 +29,8 @@ class Main:
         
     def connect_engine(self):
         return create_engine(f'mysql+mysqlconnector://{os.environ.get("DB_USER")}:{os.environ.get("DB_PASSWORD")}@{os.environ.get("DB_HOST")}:3306/{os.environ.get("DB_NAME")}', echo=False)
-        
+    
+    #TODO: Remove this function since we're using sqlalchemy instead
     def connect_database(self):
         print("Connecting database...")
         connection = mysql.connector.connect(
@@ -51,7 +52,8 @@ class Main:
         except Exception as e:
             print(e)
         print("Connected")
-        
+    
+    #TODO: change this to sqlalchemy engine
     def insert_msg_log(self, sensor_id, action):
         try : 
             cursor = self.connection.cursor()
