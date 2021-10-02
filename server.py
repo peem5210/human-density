@@ -8,18 +8,19 @@ from sqlalchemy import create_engine
 
 load_dotenv(os.path.join(os.path.dirname('./'), '.env'))
 
-TOTAL_INTERVAL = 5 #Seconds
+TOTAL_INTERVAL = 10 #Seconds
 DB_CONN_STR = f'mysql+mysqlconnector://{os.environ.get("DB_USER")}:{os.environ.get("DB_PASSWORD")}@{os.environ.get("DB_HOST")}:3306/{os.environ.get("DB_NAME")}'
 class Main:
     def __init__(self):
-        self.engine = self.connect_engine()
+        self.db_engine = self.connect_engine()
         self.detail_df = self.get_sensor_detail()
-        self.sensor_location_mapping = self.all_sensor_dict()
+        self.initialize_sensor_location_mapper = self.initialize_sensor_location_mapper()
         self.state = self.initialize_state()
         self.connect_mqtt()
         self.run()
     
-    def all_sensor_dict(self):
+    #Initialize sensor mapping
+    def initialize_sensor_location_mapper(self):
         return dict(self.detail_df[['sensor_id', 'location_id']].values.tolist())
     
     #Initialize empty state for every sensor_id
@@ -27,7 +28,7 @@ class Main:
         return dict.fromkeys(self.detail_df['sensor_id'].values.tolist(), 0)
     
     #Start the actual server
-    def run(self) :
+    def run(self):
         self.insert_total_log_loop(threading.Event())
         self.client.loop_forever()
     
@@ -53,7 +54,7 @@ class Main:
     #Inserting the log recieved from the broker
     def insert_msg_log(self, sensor_id, action):
         try : 
-            self.engine.execute("INSERT INTO message_log (sensor_id, action) VALUES (%s, %s)", (sensor_id, action))
+            self.db_engine.execute("INSERT INTO message_log (sensor_id, action) VALUES (%s, %s)", (sensor_id, action))
         except Exception as error:
             print("Failed to insert record into Laptop table {}".format(error))
 
@@ -64,6 +65,7 @@ class Main:
         
     #The callback for when a PUBLISH message is received from the server.
     def on_message(self, client, userdata, msg):
+        print(f"Message received: {msg.payload}")
         obj = Payload(msg.payload)
         if obj.sensor_id not in self.state:
             print(f'sensor id {obj.sensor_id} not exist in DB')
@@ -80,12 +82,11 @@ class Main:
     
     #Inserting total log 
     def insert_total_log(self):
-        print("Inserting total log")
         pd.DataFrame(
-                data=[[self.sensor_location_mapping[x],y] for x,y in self.state.items()], 
+                data=[[self.initialize_sensor_location_mapper[x],y] for x,y in self.state.items()], 
                 columns=['location_id', 'total'])\
             .groupby("location_id").sum('total').reset_index()\
-            .to_sql('total_log', self.engine, if_exists='append', index=False)
+            .to_sql('total_log', self.db_engine, if_exists='append', index=False)
 
     #Inserting total log every {TOTAL_INTERVAL} interval
     def insert_total_log_loop(self, threading_event):
@@ -95,7 +96,7 @@ class Main:
     
     #Querying all sensor detail
     def get_sensor_detail(self) :
-        detail = pd.read_sql('SELECT * FROM sensor_detail', self.engine)
+        detail = pd.read_sql('SELECT * FROM sensor_detail', self.db_engine)
         return detail
       
 
