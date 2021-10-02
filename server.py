@@ -14,7 +14,7 @@ class Main:
     def __init__(self):
         self.db_engine = self.connect_engine()
         self.detail_df = self.get_sensor_detail()
-        self.initialize_sensor_location_mapper = self.initialize_sensor_location_mapper()
+        self.sensor_location_mapper = self.initialize_sensor_location_mapper()
         self.state = self.initialize_state()
         self.connect_mqtt()
         self.run()
@@ -51,7 +51,7 @@ class Main:
             print(e)
         print("Connected")
     
-    #Inserting the log recieved from the broker
+    #Insert the log recieved from the broker
     def insert_msg_log(self, sensor_id, action):
         try : 
             self.db_engine.execute("INSERT INTO message_log (sensor_id, action) VALUES (%s, %s)", (sensor_id, action))
@@ -80,21 +80,21 @@ class Main:
         # print(f'New state {self.state}')
         self.insert_msg_log(obj.sensor_id, obj.action)
     
-    #Inserting total log 
+    #Insert the total log 
     def insert_total_log(self):
         pd.DataFrame(
-                data=[[self.initialize_sensor_location_mapper[x],y] for x,y in self.state.items()], 
+                data=[[self.sensor_location_mapper[x],y] for x,y in self.state.items()], 
                 columns=['location_id', 'total'])\
             .groupby("location_id").sum('total').reset_index()\
             .to_sql('total_log', self.db_engine, if_exists='append', index=False)
 
-    #Inserting total log every {TOTAL_INTERVAL} interval
+    #Insert total log every {TOTAL_INTERVAL} interval
     def insert_total_log_loop(self, threading_event):
         self.insert_total_log()
         if not threading_event.is_set():
             threading.Timer(TOTAL_INTERVAL, self.insert_total_log_loop, [threading_event]).start()
     
-    #Querying all sensor detail
+    #Query all sensor detail
     def get_sensor_detail(self) :
         detail = pd.read_sql('SELECT * FROM sensor_detail', self.db_engine)
         return detail
