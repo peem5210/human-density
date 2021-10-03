@@ -1,5 +1,5 @@
 import json
-ACTION_ENUM : list[int]= [0, 1]
+ACTION_ENUM : list= [0, 1]
 class Payload:
     def __init__(self, *args):
         if len(args) == 2:

@@ -17,7 +17,7 @@ class Main:
         self.sensor_location_mapper = self.initialize_sensor_location_mapper()
         self.state = self.initialize_state()
         self.connect_mqtt()
-        self.run()
+
     
     #Initialize sensor mapping
     def initialize_sensor_location_mapper(self):
@@ -63,10 +63,7 @@ class Main:
         # print(f"Connected with result code {str(rc)}")
         client.subscribe(str(os.environ.get("ACTION_TOPIC")))
         
-    #The callback for when a PUBLISH message is received from the server.
-    def on_message(self, client, userdata, msg):
-        print(f"Message received: {msg.payload}")
-        obj = Payload(msg.payload)
+    def recieve_message(self, obj:Payload):
         if obj.sensor_id not in self.state:
             print(f'sensor id {obj.sensor_id} not exist in DB')
             self.state[obj.sensor_id] = 0 
@@ -79,6 +76,13 @@ class Main:
             self.state[obj.sensor_id] += 1
         # print(f'New state {self.state}')
         self.insert_msg_log(obj.sensor_id, obj.action)
+        
+    #The callback for when a PUBLISH message is received from the server.
+    def on_message(self, client, userdata, msg):
+        obj = Payload(msg.payload)
+        self.recieve_message(obj)
+        print(f"Message received: {msg.payload}")
+
     
     #Insert the total log 
     def insert_total_log(self):
@@ -102,7 +106,7 @@ class Main:
 
 
 if __name__ == '__main__':
-    Main()
+    Main().run()
     
     
     
