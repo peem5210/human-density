@@ -1,7 +1,6 @@
 import os
 import paho.mqtt.client as mqtt
 import time
-import random
 from dotenv import load_dotenv
 
 from dto import Payload
