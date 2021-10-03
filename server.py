@@ -3,7 +3,7 @@ import paho.mqtt.client as mqtt
 import threading
 import pandas as pd
 from dotenv import load_dotenv
-from dto import Payload
+from util.dto import Payload
 from sqlalchemy import create_engine
 
 load_dotenv(os.path.join(os.path.dirname('./'), '.env'))
@@ -18,7 +18,6 @@ class Main:
         self.state = self.initialize_state()
         self.connect_mqtt()
 
-    
     #Initialize sensor mapping
     def initialize_sensor_location_mapper(self):
         return dict(self.detail_df[['sensor_id', 'location_id']].values.tolist())

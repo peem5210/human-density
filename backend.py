@@ -1,7 +1,7 @@
 import os
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
-from dto import Payload
+from util.dto import Payload
 import paho.mqtt.client as mqtt
 from dotenv import load_dotenv
 

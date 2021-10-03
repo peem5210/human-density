@@ -3,8 +3,8 @@ import paho.mqtt.client as mqtt
 import time
 from dotenv import load_dotenv
 
-from dto import Payload
-from mock_sensor import get_action
+from util.dto import Payload
+from util.mock_sensor import get_action
 
 
 SENSOR_ID = 1
