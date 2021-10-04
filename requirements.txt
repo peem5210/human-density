@@ -3,3 +3,5 @@ paho-mqtt
 python-dotenv
 uvicorn
 pandas
+sqlalchemy
+mysql-connector
