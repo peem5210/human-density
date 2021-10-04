@@ -21,8 +21,7 @@ app.add_middleware(
 )
 
 location_detail_mapper = dict(pd.read_sql("SELECT * FROM location_detail", main.db_engine)[["location_id", "location_name"]].values.tolist())
-
-
+    
 @app.get("/")
 def index():
     return pd.read_sql(f"""WITH ldtl AS (

@@ -7,5 +7,7 @@ if __name__ == '__main__':
     try:
         SENSOR_ID = str(int(sys.argv[1]))
         mock_sensor(client, SENSOR_ID)
+        exit(0)
     except:
         mock_all_sensor(client)
+        exit(0)
