@@ -55,7 +55,7 @@ class Main:
         try : 
             self.db_engine.execute("INSERT INTO message_log (sensor_id, action) VALUES (%s, %s)", (sensor_id, action))
         except Exception as error:
-            print("Failed to insert record into Laptop table {}".format(error))
+            print("Failed to insert record into message_log table {}".format(error))
 
     #The callback for when the client receives a CONNACK response from the server.
     def on_connect(self, client, userdata, flags, rc):
