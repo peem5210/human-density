@@ -8,7 +8,7 @@ from hdensity.dto.payload import Payload
 from hdensity.util.util_func import *
 
 loadenv()
-TOTAL_INTERVAL = 10 #Seconds
+TOTAL_INTERVAL = 2 #Seconds
 DB_CONN_STR = f'mysql+mysqlconnector://{os.environ.get("DB_USER")}:{os.environ.get("DB_PASSWORD")}@{os.environ.get("DB_HOST")}:3306/{os.environ.get("DB_NAME")}'
 class Main:
     def __init__(self):

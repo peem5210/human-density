@@ -18,7 +18,7 @@ def get_action():
 def mock_all_sensor(client):
     print(f"\nMocking ALL SENSOR\n\n")
     while True:
-        obj = Payload(str(random.randint(0, 44)), 1 if random.randint(0, 100) > 30 else 0)
+        obj = Payload(str(random.randint(0, 44)), 1 if random.randint(0, 100) > 10 else 0)
         client.publish(str(os.environ.get("ACTION_TOPIC")), obj.serialize())
         print(obj.serialize())
         time.sleep(1)
