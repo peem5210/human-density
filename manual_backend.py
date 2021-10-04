@@ -35,7 +35,7 @@ def index():
 def check_in(
     sensor_id: int,
     ):
-    if str(sensor_id) not in main.sensor_location_mapper:
+    if sensor_id not in main.sensor_location_mapper.keys():
         return f"Invalid sensor ID"
     client.publish(os.environ.get("ACTION_TOPIC"), Payload(sensor_id, 1).serialize())
     return f"SENSOR_ID: {sensor_id} at location: f{main.sensor_location_mapper[sensor_id]} increment by 1."
@@ -44,7 +44,7 @@ def check_in(
 def check_out(
     sensor_id: int,
     ):
-    if str(sensor_id) not in main.sensor_location_mapper:
+    if sensor_id not in main.sensor_location_mapper.keys():
         return f"Invalid sensor ID"
     client.publish(os.environ.get("ACTION_TOPIC"), Payload(sensor_id, 0).serialize())
     return f"SENSOR_ID: {sensor_id} at location: f{main.sensor_location_mapper[sensor_id]} decrement by 1."
