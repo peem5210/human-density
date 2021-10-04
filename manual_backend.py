@@ -23,11 +23,11 @@ def check_in(
     sensor_id: int,
     ):
     client.publish(os.environ.get("ACTION_TOPIC"), Payload(sensor_id, 1).serialize())
-    return "Success"
+    return f"sensor id: {sensor_id} increment by 1"
 
 @app.get("/out/{sensor_id}")
 def check_in(
     sensor_id: int,
     ):
     client.publish(os.environ.get("ACTION_TOPIC"), Payload(sensor_id, 0).serialize())
-    return "Success"
+    return f"sensor id: {sensor_id} decrement by 1"
