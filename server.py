@@ -16,7 +16,6 @@ class Main:
         self.detail_df = self.get_sensor_detail()
         self.sensor_location_mapper = self.initialize_sensor_location_mapper()
         self.state = self.initialize_state()
-        self.connect_mqtt()
 
     #Initialize sensor mapping
     def initialize_sensor_location_mapper(self):
@@ -105,7 +104,9 @@ class Main:
 
 
 if __name__ == '__main__':
-    Main().run()
+    main = Main()
+    main.connect_mqtt()
+    main.run()
     
     
     
