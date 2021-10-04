@@ -21,21 +21,17 @@ app.add_middleware(
 )
 
 location_detail_mapper = dict(pd.read_sql("SELECT * FROM location_detail", main.db_engine)[["location_id", "location_name"]].values.tolist())
-app.state = {}
 
-@repeat_every(seconds=10)
-def update_state():
-    app.state = pd.read_sql(f"""WITH ldtl AS (
+
+@app.get("/")
+def index():
+    return pd.read_sql(f"""WITH ldtl AS (
         SELECT ld.*, tl.datetime, tl.total FROM location_detail as ld LEFT JOIN total_log as tl ON ld.location_id = tl.location_id 
         )
         SELECT location_name, datetime as "time", total FROM( SELECT *, ROW_NUMBER() OVER(PARTITION BY location_id ORDER BY datetime DESC) AS rn
         FROM ldtl) AS a
         ORDER BY time DESC LIMIT {len(set(main.sensor_location_mapper.values()))}
     """, main.db_engine).to_dict(orient="records")
-
-@app.get("/")
-def index():
-    return app.state
 
 @app.get("/in/{sensor_id}")
 def check_in(
