@@ -2,7 +2,7 @@ import os
 import pandas as pd
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi_utils.tasks import repeat_every
+from cachetools import cached, TTLCache
 
 from hdensity.dto.payload import Payload
 from hdensity.util.util_func import *
@@ -21,8 +21,9 @@ app.add_middleware(
 )
 
 location_detail_mapper = dict(pd.read_sql("SELECT * FROM location_detail", main.db_engine)[["location_id", "location_name"]].values.tolist())
-    
+
 @app.get("/")
+@cached(cache=TTLCache(maxsize=1, ttl=10))
 def index():
     return pd.read_sql(f"""WITH ldtl AS (
         SELECT ld.*, tl.datetime, tl.total FROM location_detail as ld LEFT JOIN total_log as tl ON ld.location_id = tl.location_id 
