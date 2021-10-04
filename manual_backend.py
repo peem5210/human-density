@@ -40,7 +40,6 @@ def check_in(
     sensor_id = str(sensor_id)
     if sensor_id not in main.sensor_location_mapper.keys():
         return f"Invalid sensor ID"
-    print(main.sensor_location_mapper)
     client.publish(os.environ.get("ACTION_TOPIC"), Payload(sensor_id, 1).serialize())
     return f"SENSOR_ID: {sensor_id} at location: {location_detail_mapper[main.sensor_location_mapper[sensor_id]]} increment by 1."
 
