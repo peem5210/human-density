@@ -5,8 +5,6 @@ import random
 import paho.mqtt.client as mqtt
 
 from hdensity.dto.payload import Payload
-from hdensity.util.util_func import *
-loadenv()
 
 def get_action():
     rand = random.randint(0, 130)
