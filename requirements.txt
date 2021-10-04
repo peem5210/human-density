@@ -2,3 +2,4 @@ fastapi
 paho-mqtt
 python-dotenv
 uvicorn
+pandas
