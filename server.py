@@ -1,13 +1,13 @@
 import os
-import paho.mqtt.client as mqtt
 import threading
 import pandas as pd
-from dotenv import load_dotenv
-from util.dto import Payload
+import paho.mqtt.client as mqtt
 from sqlalchemy import create_engine
 
-load_dotenv(os.path.join(os.path.dirname('./'), '.env'))
+from hdensity.dto.payload import Payload
+from hdensity.util.util_func import *
 
+loadenv()
 TOTAL_INTERVAL = 10 #Seconds
 DB_CONN_STR = f'mysql+mysqlconnector://{os.environ.get("DB_USER")}:{os.environ.get("DB_PASSWORD")}@{os.environ.get("DB_HOST")}:3306/{os.environ.get("DB_NAME")}'
 class Main:

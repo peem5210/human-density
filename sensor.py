@@ -1,19 +1,17 @@
 import os
-import paho.mqtt.client as mqtt
 import time
-from dotenv import load_dotenv
 
-from util.dto import Payload
-from util.mock_sensor import get_action
+from hdensity.dto.payload import Payload
+from hdensity.mock.mock_sensor import get_action
+from hdensity.util.util_func import *
 
+SENSOR_ID = os.environ.get("SENSOR_ID")
 
-SENSOR_ID = 1
-
-load_dotenv(os.path.join(os.path.dirname('./'), '.env'))
 
 #Connect to mqtt client
-client = mqtt.Client()
-client.connect(os.environ.get("BROKER_HOST"), int(os.environ.get("BROKER_PORT")), 60)
+loadenv()
+client = get_mqtt_client()
+
 
 while True:
     #Get action from the sensor

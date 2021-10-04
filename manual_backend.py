@@ -1,11 +1,14 @@
 import os
-from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
-from util.dto import Payload
-import paho.mqtt.client as mqtt
-from dotenv import load_dotenv
+from fastapi.middleware.cors import CORSMiddleware
 
-load_dotenv(os.path.join(os.path.dirname('./'), '.env'))
+
+from hdensity.dto.payload import Payload
+from hdensity.util.util_func import *
+
+
+loadenv()
+client = get_mqtt_client()
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
@@ -14,9 +17,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-client = mqtt.Client()
-client.connect(os.environ.get("BROKER_HOST"), int(os.environ.get("BROKER_PORT")), 60)
-    
+
 @app.get("/in/{sensor_id}")
 def check_in(
     sensor_id: int,
