@@ -27,7 +27,7 @@ def index():
         )
         SELECT location_name, datetime as "time", total FROM( SELECT *, ROW_NUMBER() OVER(PARTITION BY location_id ORDER BY datetime DESC) AS rn
         FROM ldtl) AS a
-        ORDER BY time LIMIT {len(set(main.sensor_location_mapper.values()))}
+        ORDER BY time DESC LIMIT {len(set(main.sensor_location_mapper.values()))}
     """
     return pd.read_sql(query, main.db_engine).to_dict(orient="records")
 
