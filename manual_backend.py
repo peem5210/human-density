@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 from fastapi import FastAPI
+from fastapi_utils.tasks import repeat_every
 from fastapi.middleware.cors import CORSMiddleware
 from cachetools import cached, TTLCache
 
@@ -22,6 +23,11 @@ app.add_middleware(
 
 location_detail_mapper = dict(pd.read_sql("SELECT * FROM location_detail", main.db_engine)[["location_id", "location_name"]].values.tolist())
 
+@repeat_every(seconds=5)
+def persist_connection():
+    global client
+    client.loop()
+    
 @app.get("/")
 @cached(cache=TTLCache(maxsize=1, ttl=10))
 def index():
