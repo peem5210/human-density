@@ -44,6 +44,7 @@ def check_in(
     sensor_id: int,
     ):
     sensor_id = str(sensor_id)
+    client.reconnect()
     if sensor_id not in main.sensor_location_mapper.keys():
         return f"Invalid sensor ID"
     client.publish(os.environ.get("ACTION_TOPIC"), Payload(sensor_id, 1).serialize())
@@ -54,6 +55,7 @@ def check_out(
     sensor_id: int,
     ):
     sensor_id = str(sensor_id)
+    client.reconnect()
     if sensor_id not in main.sensor_location_mapper.keys():
         return f"Invalid sensor ID"
     client.publish(os.environ.get("ACTION_TOPIC"), Payload(sensor_id, 0).serialize())
